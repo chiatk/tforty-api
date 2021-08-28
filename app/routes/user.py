@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from sqlalchemy.sql.expression import true
 from ..database.connection_mysql import conn
 from ..models.user import users
 from ..schemas.user import User
@@ -25,11 +26,19 @@ def create_user(user: User):
 
 @user.get('/users')
 def get_users():
-    return conn.execute( users.select() ).fetchall()
+    return conn.execute( users.select().where( users.c.active == True )  ).fetchall()
 
 @user.get('/users/{id}')
 def get_one_user(id: str):
-    return conn.execute( users.select().where( users.c.id == id ) ).first()
+    user = conn.execute( users.select().where( users.c.id == id ) ).first()
+
+    if user is None:
+        return { "message": "usuario no existe" }
+
+    if user['active'] == False:
+        return { "message": "usuario eliminado" }
+
+    return user
 
 @user.post('/users/login')
 def login_user(email: str, password: str):
@@ -62,10 +71,10 @@ def login_user(email: str, password: str):
 
     
 
-@user.delete('/delete/user/{id}')
-def delete_user(id: str):
-    conn.execute( users.delete().where( users.c.id == id ) )
-    return Response(status_code=HTTP_204_NO_CONTENT, )
+# @user.delete('/delete/user/{id}')
+# def delete_user(id: str):
+#     conn.execute( users.delete().where( users.c.id == id ) )
+#     return Response(status_code=HTTP_204_NO_CONTENT, )
 
 @user.delete('/users/{id}')
 def logical_deletion_user(id: str):

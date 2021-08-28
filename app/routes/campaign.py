@@ -31,12 +31,15 @@ def create_campaign( campaign: Campaign ):
 
 @campaign.get('/campaigns')
 def get_campaigns():
-    return conn.execute( campaigns.select() ).fetchall()
+    return conn.execute( campaigns.select().where( campaigns.c.active == True ) ).fetchall()
 
 
 @campaign.get('/campaigns/{id}')
 def find_one_campaign(id: int):
-    return conn.execute( campaigns.select().where( campaigns.c.id == id )).first()
+    camp = conn.execute( campaigns.select().where( campaigns.c.id == id )).first()
+    if camp is None:
+        return { "message": "campaña no existe" }
+    return camp
 
 @campaign.put('/campaigns/{id}')
 def update_campaign(campaign: Campaign, id: int):

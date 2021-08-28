@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from sqlalchemy.sql.expression import and_
 from ..database.connection_mysql import conn
 from ..models.perk import perks
 from ..schemas.perk import Perk
@@ -22,11 +23,19 @@ def create_perk( perk: Perk ):
 
 @perk.get('/perks/{campaing_id}')
 def get_perks(campaing_id: int):
-    return conn.execute( perks.select().where( perks.c.campaing_id == campaing_id )).fetchall()
+    perk = conn.execute( perks.select().where( and_(perks.c.campaing_id == campaing_id, perks.c.active == True ) )).fetchall()
+    
+    if len(perk) == 0:
+        return { "message": "recompensa de la campaña no existe" }
+
+    return perk
 
 @perk.get('/perks/findOne/{id}')
 def find_one_perk(id: int):
-    return conn.execute(perks.select().where( perks.c.id == id )).first()
+    perk = conn.execute(perks.select().where( perks.c.id == id )).first()
+    if perk is None or perk['active'] == False:
+        return { "message": "recompensa no existe" }
+    return perk
 
 @perk.put('/perks/{id}')
 def update_perk( perk: Perk, id: int ):

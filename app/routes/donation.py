@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from sqlalchemy.sql.expression import and_
 from ..database.connection_mysql import conn
 from ..models.donation import donations
 from ..schemas.donation import Donation
@@ -20,12 +21,18 @@ def create_donation( donation: Donation ):
 
 @donation.get('/donations/{user_id}')
 def get_donations(user_id: int):
-    return conn.execute( donations.select().where( donations.c.user_id == user_id )).fetchall()
+    donation = conn.execute( donations.select().where( and_(donations.c.user_id == user_id, donations.c.state_id == 1))).fetchall()
+    if len(donation) == 0:
+        return { "message": "donation del usuario no existe" }
+    return donation
 
 
 @donation.get('/donations/findOne/{id}')
 def find_one_donation(id: int):
-    return conn.execute(donations.select().where( donations.c.id == id )).first()
+    donation = conn.execute(donations.select().where( donations.c.id == id )).first()
+    if donation is None or donation['state_id'] == 0:
+        return { "message": "donation no existe" }
+    return donation
 
 
 @donation.put('/donations/{id}')
