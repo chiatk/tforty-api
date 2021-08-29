@@ -1,5 +1,7 @@
 from sqlalchemy import create_engine, MetaData
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 host        =   os.environ['host']
 database    =   os.environ['database']
