@@ -1,12 +1,12 @@
 from fastapi import APIRouter
-from ..database.connection_mysql import conn
+from ..database.connection_mysql import connect
 from ..models.campaign import campaigns
 from ..schemas.campaign import Campaign
 
+conn = connect()
 campaign = APIRouter()
 
-
-@campaign.post('/campaign')
+@campaign.post('/campaign', tags=["campaign"])
 def create_campaign( campaign: Campaign ):
     new_campaign = {
         "user_id": campaign.user_id,
@@ -29,19 +29,19 @@ def create_campaign( campaign: Campaign ):
     result = conn.execute( campaigns.insert().values(new_campaign) )
     return conn.execute( campaigns.select().where( campaigns.c.id == result.lastrowid )).first()
 
-@campaign.get('/campaigns')
+@campaign.get('/campaigns', tags=["campaign"])
 def get_campaigns():
     return conn.execute( campaigns.select().where( campaigns.c.active == True ) ).fetchall()
 
 
-@campaign.get('/campaigns/{id}')
+@campaign.get('/campaigns/{id}', tags=["campaign"])
 def find_one_campaign(id: int):
     camp = conn.execute( campaigns.select().where( campaigns.c.id == id )).first()
     if camp is None:
         return { "message": "campaña no existe" }
     return camp
 
-@campaign.put('/campaigns/{id}')
+@campaign.put('/campaigns/{id}', tags=["campaign"])
 def update_campaign(campaign: Campaign, id: int):
     conn.execute(
         campaigns.update()
@@ -67,7 +67,7 @@ def update_campaign(campaign: Campaign, id: int):
     )
     return conn.execute( campaigns.select().where( campaigns.c.id == id ) ).first()
 
-@campaign.delete('/campaigns/{id}')
+@campaign.delete('/campaigns/{id}', tags=["campaign"])
 def logical_deletion_campaign(id: int):
     conn.execute(
         campaigns.update()

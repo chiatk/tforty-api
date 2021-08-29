@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Table
 from sqlalchemy.sql.sqltypes import Boolean, Integer, String, DateTime
 from sqlalchemy.sql.functions import func
-from ..database.connection_mysql import meta, engine
+from ..database.connection_mysql import meta
 
 users = Table(
     "users",
@@ -16,5 +16,3 @@ users = Table(
     Column("chia_wallet", String(255)),
     Column("balance", Integer),
 )
-
-meta.create_all(engine)
