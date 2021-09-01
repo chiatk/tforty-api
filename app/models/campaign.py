@@ -2,7 +2,7 @@ from re import T
 from sqlalchemy import Column, Table, ForeignKey
 from sqlalchemy.sql.sqltypes import Integer, String, DateTime, Boolean
 from sqlalchemy.sql.functions import func
-from ..database.connection_mysql import meta, engine
+from ..database.connection_mysql import meta
 
 campaigns = Table(
     "campaigns",
@@ -27,6 +27,3 @@ campaigns = Table(
     Column( "campaign_type_id", Integer ),
     Column( "founded", Boolean ),
 )
-
-
-meta.create_all(engine)
