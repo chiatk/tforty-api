@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.sql.expression import true
 from ..database.connection_mysql import connect
 from ..models.user import users
-from ..schemas.user import User, ResUser, ResListUser, ErrorUser
+from ..schemas.user import User, ResUser, ResListUser, ErrorUser, LoginUser
 from cryptography.fernet import Fernet, InvalidToken
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm.session import Session
@@ -67,13 +67,13 @@ def get_one_user(id: int) -> Dict:
         return JSONResponse(status_code=400, content={"status": False, "message": "problema con el usuario" })
 
 @user.post('/users/login', tags=["users"])
-def login_user(email: str, password: str):
+def login_user(loginUser: LoginUser):
 
     try:
-        if email is None or password is None:
+        if loginUser.email is None or loginUser.password is None:
             return { "status": -1, "message": "completa los campos requeridos" }
 
-        profile = conn.execute( users.select().where( users.c.email == email ) ).first()
+        profile = conn.execute( users.select().where( users.c.email == loginUser.email ) ).first()
         print(f"profile-> {profile}")
 
         if profile is None:
@@ -86,7 +86,7 @@ def login_user(email: str, password: str):
    
         hash_pw = f.decrypt(bytes(profile.hash_pw,'utf-8'))
 
-        if password != hash_pw.decode():
+        if loginUser.password != hash_pw.decode():
             return { "status": -1, "message": "problemas con email o password" }
         
 

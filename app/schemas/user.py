@@ -23,3 +23,7 @@ class ErrorUser(BaseModel):
     status: bool= False
     message: str
 
+
+class LoginUser(BaseModel):
+    email: str
+    password: str
