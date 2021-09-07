@@ -1,7 +1,7 @@
 from typing import Any, Dict, List
+import base64
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
-from sqlalchemy.sql.expression import true
 from ..database.connection_mysql import connect
 from ..models.user import users
 from ..schemas.user import User, ResUser, ResListUser, ErrorUser, LoginUser
@@ -13,7 +13,7 @@ from starlette.responses import Response
 from starlette.status import HTTP_204_NO_CONTENT
 
 user = APIRouter()
-key = Fernet.generate_key()
+key = base64.urlsafe_b64encode(b'\xbf\xd8\xf8\xaf`d0\x80\xdf\xc4\xc11\xdf\xc5se\xbfz\xafS\x12\x1a.\xa2\xe8\x04S\xb6\x85;\xa3\xff')
 f = Fernet(key) 
 conn: Session = connect()
 
