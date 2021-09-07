@@ -70,6 +70,7 @@ def get_one_user(id: int) -> Dict:
 def login_user(loginUser: LoginUser):
 
     try:
+        print( f"email-> {loginUser.email}" )
         if loginUser.email is None or loginUser.password is None:
             return { "status": -1, "message": "completa los campos requeridos" }
 
