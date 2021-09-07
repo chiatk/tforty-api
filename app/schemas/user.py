@@ -4,12 +4,12 @@ from pydantic   import BaseModel
 
 class User(BaseModel):
     id: Optional[int] = None
-    name: Optional[str]
+    name: str
     email: str
     hash_pw: str
-    chia_wallet: str
-    balance: int
-    active: bool
+    chia_wallet: Optional[str]
+    balance: Optional[int]
+    active: Optional[bool] = True
 
 class ResListUser(BaseModel):
     status: bool
