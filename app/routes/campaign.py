@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from sqlalchemy.sql.expression import and_
 from ..database.connection_mysql import connect
 from ..models.campaign import campaigns
 from ..schemas.campaign import Campaign
@@ -36,7 +37,7 @@ def get_campaigns():
 
 @campaign.get('/campaigns/{id}', tags=["campaign"])
 def find_one_campaign(id: int):
-    camp = conn.execute( campaigns.select().where( campaigns.c.id == id )).first()
+    camp = conn.execute( campaigns.select().where( and_(campaigns.c.id == id, campaigns.c.active == True) )).first()
     if camp is None:
         return { "message": "campaña no existe" }
     return camp
