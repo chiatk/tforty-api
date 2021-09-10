@@ -3,11 +3,11 @@ from typing import Optional
 from pydantic import BaseModel
 
 class Campaign(BaseModel):
-    id: Optional[int]
+    id: Optional[int] = None
     user_id: int
     title: str
     chia_wallet: Optional[str]
-    active: Optional[bool]
+    active: Optional[bool] = True
     country_id: int
     short_desc: Optional[str]
     card_image_url: str
