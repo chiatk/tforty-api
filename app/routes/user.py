@@ -122,15 +122,19 @@ def logical_deletion_user(id: int) -> Dict:
 @user.put('/users/{id}', tags=["users"])
 def update_user(user: UpdateUser, id: int) -> Dict:
     try:
+        profile = conn.execute( users.select().where( users.c.id == id ) ).first()
+        if profile is None or profile['active'] == False:
+            return JSONResponse(status_code=400, content={"status": -1, "message": "usuario no existe" })
+
         conn.execute(
             users.update()
             .values(
-                name=user.name,
-                email=user.email,
-                hash_pw=f.encrypt(bytes(user.hash_pw,'utf-8')),
-                chia_wallet= user.chia_wallet,
-                balance= user.balance,
-                active= user.active
+                name= profile['name'] if user.name is None else user.name,
+                email=profile['email'] if user.email is None else user.email,
+                hash_pw= profile['hash_pw'] if user.hash_pw is None else f.encrypt(bytes(user.hash_pw,'utf-8')),
+                chia_wallet= profile['chia_wallet'] if user.chia_wallet is None else user.chia_wallet,
+                balance=profile['balance'] if user.balance is None else  user.balance,
+                active=profile['active'] if user.active is None else  user.active
             )
             .where( users.c.id == id )
         )
