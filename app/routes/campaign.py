@@ -77,7 +77,7 @@ def update_campaign(campaign: Campaign, id: int):
             country_id= campaign.country_id,
             short_desc= campaign.short_desc,
             card_image_url= campaign.card_image_url,
-            category_id= campaign.category_id,
+            category= campaign.category,
             duration= campaign.duration,
             video_url= campaign.video_url,
             video_overlay_image_url= campaign.video_overlay_image_url,
@@ -85,7 +85,8 @@ def update_campaign(campaign: Campaign, id: int):
             story= campaign.story,
             goal= campaign.goal,
             campaign_type_id= campaign.campaign_type_id,
-            founded= campaign.founded
+            founded= campaign.founded,
+            current_balance=campaign.current_balance
         )
         .where( campaigns.c.id == id )
     )
