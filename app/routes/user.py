@@ -14,7 +14,7 @@ from starlette.responses import Response
 from starlette.status import HTTP_204_NO_CONTENT
 
 user = APIRouter()
-key = base64.urlsafe_b64encode(b'\xbf\xd8\xf8\xaf`d0\x80\xdf\xc4\xc11\xdf\xc5se\xbfz\xafS\x12\x1a.\xa2\xe8\x04S\xb6\x85;\xa3\xff')
+key = base64.urlsafe_b64encode(os.environ.get("key"))
 f = Fernet(key) 
 conn: Session = connect()
 
