@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from .routes.user import user
 from .routes.campaign import campaign
@@ -6,6 +7,8 @@ from .routes.perk import perk
 from .routes.donation import donation
 
 app = FastAPI()
+
+app.mount("/media", StaticFiles(directory="assets"), name="assets")
 
 origins = ["*"]
 app.add_middleware(

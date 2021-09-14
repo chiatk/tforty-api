@@ -1,11 +1,33 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, File, UploadFile
 from sqlalchemy.sql.expression import and_
 from ..database.connection_mysql import connect
 from ..models.campaign import campaigns
 from ..schemas.campaign import Campaign
+import shutil
+import os
 
 conn = connect()
 campaign = APIRouter()
+
+@campaign.post('/example-upload-image', tags=["campaign"])
+def upload_image( title: str, uploaded_image: UploadFile = File(...) ):
+
+    with open(f"assets/{uploaded_image.filename}", "wb") as buffer:
+        shutil.copyfileobj(uploaded_image.file, buffer)
+
+
+    pathImage = os.path.join( os.getcwd(), "assets" )
+ 
+    os.rename( f"{pathImage}/{uploaded_image.filename}", f"{pathImage}/{title}.png" )
+    image_url = str(f"{os.environ.get('domain')}/media/{title}.png")
+
+    
+    new_campaign = {
+        "title": title,
+        "card_image_url": image_url
+    }
+    
+    return { "status": 1, "data": new_campaign }
 
 @campaign.post('/campaign', tags=["campaign"])
 def create_campaign( campaign: Campaign ):
@@ -17,7 +39,7 @@ def create_campaign( campaign: Campaign ):
         "country_id": campaign.country_id,
         "short_desc": campaign.short_desc,
         "card_image_url": campaign.card_image_url,
-        "category_id": campaign.category_id,
+        "category": campaign.category,
         "duration": campaign.duration,
         "video_url": campaign.video_url,
         "video_overlay_image_url": campaign.video_overlay_image_url,
@@ -25,7 +47,8 @@ def create_campaign( campaign: Campaign ):
         "story": campaign.story,
         "goal": campaign.goal,
         "campaign_type_id": campaign.campaign_type_id,
-        "founded": campaign.founded
+        "founded": campaign.founded,
+        "current_balance": campaign.current_balance
     }
     result = conn.execute( campaigns.insert().values(new_campaign) )
     return conn.execute( campaigns.select().where( campaigns.c.id == result.lastrowid )).first()

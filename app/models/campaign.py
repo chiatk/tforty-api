@@ -17,7 +17,7 @@ campaigns = Table(
     Column( "country_id", Integer ),
     Column( "short_desc", String(250) ),
     Column( "card_image_url", String(250) ),
-    Column( "category_id", Integer ),
+    Column( "category", String(250) ),
     Column( "duration", Integer ),
     Column( "video_url", String(250) ),
     Column( "video_overlay_image_url", String(250) ),
@@ -26,4 +26,5 @@ campaigns = Table(
     Column( "goal", Integer ),
     Column( "campaign_type_id", Integer ),
     Column( "founded", Boolean ),
+    Column( "current_balance", Integer )
 )
