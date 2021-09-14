@@ -6,29 +6,11 @@ from ..models.campaign import campaigns
 from ..schemas.campaign import Campaign, CampaignUpdate
 import shutil
 import os
+from datetime import datetime
 
 conn = connect()
 campaign = APIRouter()
 
-@campaign.post('/example-upload-image', tags=["campaign"])
-def upload_image( title: str, uploaded_image: UploadFile = File(...) ):
-
-    with open(f"assets/{uploaded_image.filename}", "wb") as buffer:
-        shutil.copyfileobj(uploaded_image.file, buffer)
-
-
-    pathImage = os.path.join( os.getcwd(), "assets" )
- 
-    os.rename( f"{pathImage}/{uploaded_image.filename}", f"{pathImage}/{title}.png" )
-    image_url = str(f"{os.environ.get('domain')}/media/{title}.png")
-
-    
-    new_campaign = {
-        "title": title,
-        "card_image_url": image_url
-    }
-    
-    return { "status": 1, "data": new_campaign }
 
 @campaign.post('/campaign', tags=["campaign"])
 def create_campaign( campaign: Campaign ):
@@ -56,7 +38,12 @@ def create_campaign( campaign: Campaign ):
 
 @campaign.get('/campaigns', tags=["campaign"])
 def get_campaigns():
-    return conn.execute( campaigns.select().where( campaigns.c.active == True ) ).fetchall()
+    listCampaigns = conn.execute( campaigns.select().where( campaigns.c.active == True ) ).fetchall()
+
+    print(listCampaigns[2]['created'])
+    hoy = datetime.now()
+    print(hoy.strftime('%d/%m/%Y'))
+    return listCampaigns
 
 
 @campaign.get('/campaigns/{id}', tags=["campaign"])
