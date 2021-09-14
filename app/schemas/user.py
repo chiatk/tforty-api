@@ -11,6 +11,14 @@ class User(BaseModel):
     balance: Optional[int]
     active: Optional[bool] = True
 
+class UpdateUser(BaseModel):
+    name: Optional[str]
+    email: Optional[str]
+    hash_pw: Optional[str]
+    chia_wallet: Optional[str]
+    balance: Optional[int]
+    active: Optional[bool]
+
 class ResListUser(BaseModel):
     status: bool
     data: List[User]

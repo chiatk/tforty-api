@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
 from ..database.connection_mysql import connect
 from ..models.user import users
-from ..schemas.user import User, ResUser, ResListUser, ErrorUser, LoginUser
+from ..schemas.user import User, ResUser, ResListUser, ErrorUser, LoginUser, UpdateUser
 from cryptography.fernet import Fernet, InvalidToken
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm.session import Session
@@ -120,7 +120,7 @@ def logical_deletion_user(id: int) -> Dict:
 
 
 @user.put('/users/{id}', tags=["users"])
-def update_user(user: User, id: int) -> Dict:
+def update_user(user: UpdateUser, id: int) -> Dict:
     try:
         conn.execute(
             users.update()
