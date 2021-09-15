@@ -2,7 +2,7 @@ from sqlalchemy import Column, Table
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.sql.sqltypes import Integer, String, DateTime, Boolean
 from sqlalchemy.sql.functions import func
-from ..database.connection_mysql import meta, engine
+from ..database.connection_mysql import meta
 
 perks = Table(
     "perks",
@@ -19,5 +19,3 @@ perks = Table(
     Column( "description", String(255) ),
     Column( "quantity_available", Integer ),
 )
-
-meta.create_all(engine)

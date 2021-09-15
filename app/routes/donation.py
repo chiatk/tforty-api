@@ -1,11 +1,13 @@
 from fastapi import APIRouter
-from ..database.connection_mysql import conn
+from sqlalchemy.sql.expression import and_
+from ..database.connection_mysql import connect
 from ..models.donation import donations
 from ..schemas.donation import Donation
 
+conn = connect()
 donation = APIRouter()
 
-@donation.post('/donations')
+@donation.post('/donations', tags=["donations"])
 def create_donation( donation: Donation ):
     new_donation = {
         "campaing_id": donation.campaing_id,
@@ -18,17 +20,23 @@ def create_donation( donation: Donation ):
     return conn.execute(donations.select().where( donations.c.id == result.lastrowid )).first()
 
 
-@donation.get('/donations/{user_id}')
+@donation.get('/donations/{user_id}', tags=["donations"])
 def get_donations(user_id: int):
-    return conn.execute( donations.select().where( donations.c.user_id == user_id )).fetchall()
+    donation = conn.execute( donations.select().where( and_(donations.c.user_id == user_id, donations.c.state_id == 1))).fetchall()
+    if len(donation) == 0:
+        return { "message": "donation del usuario no existe" }
+    return donation
 
 
-@donation.get('/donations/findOne/{id}')
+@donation.get('/donations/findOne/{id}', tags=["donations"])
 def find_one_donation(id: int):
-    return conn.execute(donations.select().where( donations.c.id == id )).first()
+    donation = conn.execute(donations.select().where( donations.c.id == id )).first()
+    if donation is None or donation['state_id'] == 0:
+        return { "message": "donation no existe" }
+    return donation
 
 
-@donation.put('/donations/{id}')
+@donation.put('/donations/{id}', tags=["donations"])
 def update_donation( donation: Donation, id: int ):
     conn.execute(
         donations.update().values(
@@ -41,7 +49,7 @@ def update_donation( donation: Donation, id: int ):
     )
     return conn.execute( donations.select().where( donations.c.id == id )).first()
 
-@donation.delete('/donations/{id}')
+@donation.delete('/donations/{id}', tags=["donations"])
 def logical_deletion_donation(id: int):
     conn.execute(
         donations.update()

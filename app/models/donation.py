@@ -1,7 +1,7 @@
 from sqlalchemy.sql.schema import Table, Column, ForeignKey
 from sqlalchemy.sql.sqltypes import Integer, DateTime
 from sqlalchemy.sql.functions import func
-from ..database.connection_mysql import meta, engine
+from ..database.connection_mysql import meta
 
 donations = Table(
     "donations",
@@ -16,5 +16,3 @@ donations = Table(
     Column( "state_id", Integer ),
 
 )
-
-meta.create_all(engine)
